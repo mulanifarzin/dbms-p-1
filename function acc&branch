@@ -1,0 +1,30 @@
+delimiter //
+mysql> create function banking(accnum int,branch varchar(20))
+    -> returns varchar(30)
+    -> deterministic
+    -> begin
+    -> declare username varchar(20);
+    -> declare balance1 int;
+    -> select accname,balance into username,balance1 from acc_details where accno=accnum;
+    -> if balance1 is not null then
+    -> insert into active_acc_details values(accnum,username,balance1);
+    -> return "account is active";
+    -> else
+    -> return "account is not active";
+    -> end if;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select banking(1,'pimpri');
+    -> //
++---------------------+
+| banking(1,'pimpri') |
++---------------------+
+| account is active   |
++---------------------+
+1 row in set (0.01 sec)
+
+mysql> create table student_marks(rollnum int,name varchar(20),total_marks int);
+    -> //
+Query OK, 0 rows affected (0.04 sec)
