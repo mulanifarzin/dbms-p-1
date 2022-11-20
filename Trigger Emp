@@ -1,0 +1,74 @@
+create table emp_sal(eno int,ename varchar(20),salary int);
+
+create table tracking(enumb int,salary int);
+
+Trigger before update
+
+create trigger insert_sal before insert on emp_sal for each row
+begin
+if new.salary<50000 then
+signal sqlstate '45000'
+set message_text='inserted salary cannot be less than 50000';
+else
+insert into tracking values(new.eno,new.salary);
+end if;
+end;
+//
+
+insert into emp_sal values(1,'prathamesh',45000);
+ERROR 1644 (45000): inserted salary cannot be less than 50000
+mysql> insert into emp_sal values(1,'prathamesh',55000);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from emp_sal;
++------+------------+--------+
+| eno  | ename      | salary |
++------+------------+--------+
+|    1 | prathamesh |  55000 |
++------+------------+--------+
+1 row in set (0.01 sec)
+
+select * from tracking;
++-------+--------+
+| enumb | salary |
++-------+--------+
+|     1 |  55000 |
++-------+--------+
+1 row in set (0.01 sec)
+
+
+Trigger before update
+
+create trigger update_sal before update on emp_sal for each row
+begin if new.salary<50000 then 
+signal sqlstate '45000' set message_text='updated salary cannot be less than 50000';
+else
+insert into tracking values(old.eno,new.salary);
+end if;
+end;
+//
+
+mysql> update emp_sal set salary=45000 where eno=1;
+ERROR 1644 (45000): updated salary cannot be less than 50000
+
+mysql> update emp_sal set salary=65000 where eno=1;//
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from emp_sal;//
++------+------------+--------+
+| eno  | ename      | salary |
++------+------------+--------+
+|    1 | prathamesh |  65000 |
++------+------------+--------+
+1 row in set (0.00 sec)
+
+mysql> select * from tracking;//
++-------+--------+
+| enumb | salary |
++-------+--------+
+|     1 |  55000 |
+|     1 |  65000 |
++-------+--------+
+2 rows in set (0.00 sec)
+
