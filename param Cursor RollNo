@@ -1,0 +1,78 @@
+Write a PL/SQL block of code using parameterized Cursor, that will merge the data available in the newly 
+created table N_RollCall with the data available in the table O_RollCall. If the data in the first table already 
+exist in the second table then that data should be skipped.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+mysql> create table stu_old (roll_no int,marks int);
+Query OK, 0 rows affected (0.23 sec)
+
+mysql> create table stu_new (roll_no int,marks int);
+Query OK, 0 rows affected (0.35 sec)
+
+mysql> insert into stu_old values(1,67),(2,90),(3,87),(4,76),(5,48),(6,65);
+Query OK, 6 rows affected (0.08 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> insert into stu_new values(1,67),(2,90),(3,87);
+Query OK, 3 rows affected (0.08 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from stu_old;
++---------+-------+
+| roll_no | marks |
++---------+-------+
+|       1 |    67 |
+|       2 |    90 |
+|       3 |    87 |
+|       4 |    76 |
+|       5 |    48 |
+|       6 |    65 |
++---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> select * from stu_new;
++---------+-------+
+| roll_no | marks |
++---------+-------+
+|       1 |    67 |
+|       2 |    90 |
+|       3 |    87 |
++---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> delimiter //
+mysql> create procedure cur2()
+    -> begin
+    -> declare troll int;
+    -> declare exit_handler boolean;
+    -> declare c1 cursor for select roll_no from stu_old;
+    -> declare continue handler for not found set exit_handler = TRUE;
+    -> open c1;
+    -> loop1: loop
+    -> fetch c1 into troll;
+    -> if not exists (select * from stu_new where roll_no=troll) then
+    -> insert into stu_new select * from stu_old where roll_no=troll;
+    -> end if;
+    -> if exit_handler then
+    -> leave loop1;
+    -> end if;
+    -> end loop loop1;
+    -> end //
+Query OK, 0 rows affected (0.10 sec)
+
+mysql> call cur2()//
+Query OK, 0 rows affected (0.11 sec)
+
+mysql> select * from stu_new//
++---------+-------+
+| roll_no | marks |
++---------+-------+
+|       1 |    67 |
+|       2 |    90 |
+|       3 |    87 |
+|       4 |    76 |
+|       5 |    48 |
+|       6 |    65 |
++---------+-------+
+6 rows in set (0.00 sec)
