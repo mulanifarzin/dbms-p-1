@@ -1,0 +1,215 @@
+1. Create following Tables 
+cust_mstr(cust_no,fname,lname) 
+add_dets(code_no,add1,add2,state,city,pincode) 
+Retrieve the address of customer Fname as 'xyz' and Lname as 'pqr
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+mysql> create table cust_mstr(cust_no int,fname varchar(250),lname varchar(250));
+Query OK, 0 rows affected (1.20 sec)
+
+mysql> insert into cust_mstr values(1,"abc","pqr"),(2,"xyz","bcd"),(3,"mno","ghi");
+Query OK, 3 rows affected (0.27 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> create table add_dets(cust_no int,add1 varchar(250),add2 varchar(250),state varchar(250),city varchar(250),pincode int);
+Query OK, 0 rows affected (0.61 sec)
+
+mysql> insert into add_dets values(1,"abc chowk","pqr chowk","Maharashtra","Pune",410501),(2,"xyz chowk","bcd chowk","Karnataka","Vijaypura",905632),(3,"mno chowk","ghi chowk","Goa","panaji",313131);
+Query OK, 3 rows affected (0.08 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from cust_mstr;
++---------+-------+-------+
+| cust_no | fname | lname |
++---------+-------+-------+
+|       1 | abc   | pqr   |
+|       2 | xyz   | bcd   |
+|       3 | mno   | ghi   |
+|       1 | abc   | pqr   |
+|       1 | xyz   | pqr   |
++---------+-------+-------+
+5 rows in set (0.00 sec)
+
+mysql> select * from add_dets;
++---------+-----------+-----------+-------------+-----------+---------+
+| cust_no | add1      | add2      | state       | city      | pincode |
++---------+-----------+-----------+-------------+-----------+---------+
+|       1 | abc chowk | pqr chowk | Maharashtra | Pune      |  410501 |
+|       2 | xyz chowk | bcd chowk | Karnataka   | Vijaypura |  905632 |
+|       3 | mno chowk | ghi chowk | Goa         | panaji    |  313131 |
++---------+-----------+-----------+-------------+-----------+---------+
+3 rows in set (0.05 sec)
+
+mysql> select c.fname, a.add1, a.add2 from cust_mstr as c, add_dets as a where a.cust_no = c.cust_no and fname = "xyz" and lname = "pqr";
++-------+-----------+-----------+
+| fname | add1      | add2      |
++-------+-----------+-----------+
+| xyz   | abc chowk | pqr chowk |
++-------+-----------+-----------+
+1 row in set (0.01 sec)
+
+mysql> select c.lname, a.add1, a.add2 from cust_mstr as c, add_dets as a where a.cust_no = c.cust_no and fname = "xyz" and lname = "pqr";
++-------+-----------+-----------+
+| lname | add1      | add2      |
++-------+-----------+-----------+
+| pqr   | abc chowk | pqr chowk |
++-------+-----------+-----------+
+1 row in set (0.01 sec)
+
+                                                            OR
+
+
+mysql> select c.fname,a.add1,a.add2 from cust_mstr as c inner join add_dets as a on a.cust_no=c.cust_no and fname="xyz" and lname="pqr";
++-------+-----------+-----------+
+| fname | add1      | add2      |
++-------+-----------+-----------+
+| xyz   | abc chowk | pqr chowk |
++-------+-----------+-----------+
+1 row in set (0.00 sec)
+
+mysql> select c.lname,a.add1,a.add2 from cust_mstr as c inner join add_dets as a on a.cust_no=c.cust_no and fname="xyz" and lname="pqr";
++-------+-----------+-----------+
+| lname | add1      | add2      |
++-------+-----------+-----------+
+| pqr   | abc chowk | pqr chowk |
++-------+-----------+-----------+
+1 row in set (0.00 sec)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2. Create following Tables 
+cust_mstr(custno,fname,lname) 
+acc_fd_cust_dets(codeno,acc_fd_no) fd_dets(fd_sr_no,amt) 
+List the customer holding fixed deposit of amount more than 5000
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+mysql> select * from acc_fd_cust_dets;
++---------+-----------+
+| cust_no | acc_fd_no |
++---------+-----------+
+|       1 |      4554 |
+|       2 |      8998 |
+|       3 |      7667 |
+|       4 |      5665 |
++---------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> select * from fd_dets;
++---------+------+
+| cust_no | amt  |
++---------+------+
+|       1 | 5000 |
+|       2 | 7000 |
+|       3 | 3000 |
+|       4 | 6000 |
++---------+------+
+4 rows in set (0.00 sec)
+
+mysql> select * from cust_mstr;
++---------+-------+-------+
+| cust_no | fname | lname |
++---------+-------+-------+
+|       1 | abc   | pqr   |
+|       2 | xyz   | bcd   |
+|       3 | mno   | ghi   |
+|       1 | abc   | pqr   |
+|       1 | xyz   | pqr   |
++---------+-------+-------+
+5 rows in set (0.00 sec)
+
+mysql> select c.fname,f.amt from cust_mstr as c,fd_dets as f where c.cust_no=f.cust_no and f.amt>5000;
++-------+------+
+| fname | amt  |
++-------+------+
+| xyz   | 7000 |
++-------+------+
+1 row in set (0.06 sec)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+3. Create following Tables 
+emp_mstr(e_mpno,f_name,l_name,m_name,dept,desg,branch_no ) 
+branch_mstr(name,b_no) 
+List the employee details along with branch names to which they belong
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+mysql> select * from emp_mstr;
++--------+--------+-------------+-------------+-------+---------+-----------+
+| emp_no | f_name | l_name      | m_name      | dept  | desg    | branch_no |
++--------+--------+-------------+-------------+-------+---------+-----------+
+|      1 | Mayur  | Shinde      | Dnyaneshwar | AI&DS | Student |       100 |
+|      2 | Sonu   | vishwakarma | Shriram     | comp  | Student |       200 |
+|      3 | Prasad | Shetye      | Shankar     | ENTC  | Student |       300 |
++--------+--------+-------------+-------------+-------+---------+-----------+
+3 rows in set (0.00 sec)
+
+mysql> select * from branch_mstr;
++--------+-----------+
+| name   | branch_no |
++--------+-----------+
+| Chakan |       100 |
+| Pune   |       200 |
+| Nashik |       300 |
++--------+-----------+
+3 rows in set (0.00 sec)
+
+mysql> select emp_no,f_name,l_name,m_name,dept,desg,name from emp_mstr as e,branch_mstr as b where e.branch_no=b.branch_no;
++--------+--------+-------------+-------------+-------+---------+--------+
+| emp_no | f_name | l_name      | m_name      | dept  | desg    | name   |
++--------+--------+-------------+-------------+-------+---------+--------+
+|      1 | Mayur  | Shinde      | Dnyaneshwar | AI&DS | Student | Chakan |
+|      2 | Sonu   | vishwakarma | Shriram     | comp  | Student | Pune   |
+|      3 | Prasad | Shetye      | Shankar     | ENTC  | Student | Nashik |
++--------+--------+-------------+-------------+-------+---------+--------+
+3 rows in set (0.01 sec)
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+4. Create following Tables 
+emp_mstr(emp_no,f_name,l_name,m_name,dept) 
+cntc_dets(code_no,cntc_type,cntc_data) 
+List the employee details along with contact details using left outer join & right join
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+mysql> select * from emp_master;
++--------+--------+-------------+-------------+-------+
+| emp_no | f_name | l_name      | m_name      | dept  |
++--------+--------+-------------+-------------+-------+
+|      1 | Mayur  | Shinde      | Dnyaneshwar | AI&DS |
+|      2 | Sonu   | Vishwakarma | Shriram     | Comp  |
+|      3 | Prasad | Shetye      | Shankar     | ENTC  |
++--------+--------+-------------+-------------+-------+
+3 rows in set (0.00 sec)
+
+mysql> select * from cntc_dets;
++--------+-----------+------------+
+| emp_no | cntc_type | cntc_data  |
++--------+-----------+------------+
+|      1 | +91       | 9763083597 |
+|      2 | +91       | 9850344321 |
+|      3 | +91       | 9972146771 |
++--------+-----------+------------+
+3 rows in set (0.00 sec)
+
+mysql> select * from emp_master as e left join cntc_dets as c on  e.emp_no=c.emp_no;
++--------+--------+-------------+-------------+-------+--------+-----------+------------+
+| emp_no | f_name | l_name      | m_name      | dept  | emp_no | cntc_type | cntc_data  |
++--------+--------+-------------+-------------+-------+--------+-----------+------------+
+|      1 | Mayur  | Shinde      | Dnyaneshwar | AI&DS |      1 | +91       | 9763083597 |
+|      2 | Sonu   | Vishwakarma | Shriram     | Comp  |      2 | +91       | 9850344321 |
+|      3 | Prasad | Shetye      | Shankar     | ENTC  |      3 | +91       | 9972146771 |
++--------+--------+-------------+-------------+-------+--------+-----------+------------+
+3 rows in set (0.06 sec)
+
+mysql> select * from emp_master as e right join cntc_dets as c on  e.emp_no=c.emp_no;
++--------+--------+-------------+-------------+-------+--------+-----------+------------+
+| emp_no | f_name | l_name      | m_name      | dept  | emp_no | cntc_type | cntc_data  |
++--------+--------+-------------+-------------+-------+--------+-----------+------------+
+|      1 | Mayur  | Shinde      | Dnyaneshwar | AI&DS |      1 | +91       | 9763083597 |
+|      2 | Sonu   | Vishwakarma | Shriram     | Comp  |      2 | +91       | 9850344321 |
+|      3 | Prasad | Shetye      | Shankar     | ENTC  |      3 | +91       | 9972146771 |
++--------+--------+-------------+-------------+-------+--------+-----------+------------+
+3 rows in set (0.00 sec)
