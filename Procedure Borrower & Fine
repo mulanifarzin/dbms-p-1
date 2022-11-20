@@ -1,0 +1,61 @@
+mysql> delimiter //
+mysql> create procedure lib_fin_return1(rollnum int,nameofb varchar(20))
+    -> begin
+    -> declare issdate date;
+    -> declare cdate date;
+    -> declare datedif int;
+    -> declare fineamt int;
+    -> select curdate() into cdate;
+    -> select dateofi into issdate from borr where rolln=rollnum;
+    -> set datedif=datediff(cdate,issdate);
+    -> if datedif>=15 and datedif<=30 then
+    -> set fineamt=5*datedif;
+    -> elseif datedif>30 then
+    -> set fineamt=50*datedif;
+    -> end if;
+    -> insert into fine values(rollnum,cdate,fineamt);
+    -> update borr set status='r' where rolln=rollnum;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call lib_fin_return1(1,'abc');
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from fine;
+    -> //
++--------+------------+--------+
+| rollno | dates      | amount |
++--------+------------+--------+
+|      1 | 2022-11-18 |   2400 |
++--------+------------+--------+
+1 row in set (0.00 sec)
+
+mysql> call lib_fin_return1(2,'srishti');
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from fine;
+    -> //
++--------+------------+--------+
+| rollno | dates      | amount |
++--------+------------+--------+
+|      1 | 2022-11-18 |   2400 |
+|      2 | 2022-11-18 |   1550 |
++--------+------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> call lib_fin_return1(3,'pqr');
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from fine;//
++--------+------------+--------+
+| rollno | dates      | amount |
++--------+------------+--------+
+|      1 | 2022-11-18 |   2400 |
+|      2 | 2022-11-18 |   1550 |
+|      3 | 2022-11-18 |    120 |
++--------+------------+--------+
+3 rows in set (0.01 sec)
