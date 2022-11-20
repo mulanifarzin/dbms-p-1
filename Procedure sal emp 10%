@@ -1,0 +1,36 @@
+mysql> delimiter //
+mysql> create procedure inc_sal(eno int)
+    -> begin
+    -> declare avgsal int;
+    -> declare sal  int;
+    -> select avg(salary) into avgsal from emp;
+    -> select salary into sal from emp where e_no=eno;
+    -> if avgsal>sal then
+    -> set sal=sal+sal*0.1;
+    -> insert into increment_salary values(eno,sal);
+    -> end if;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call inc_sal(1);//
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from increment_salary//
++------+--------+
+| e_no | salary |
++------+--------+
+|    1 |   1100 |
++------+--------+
+1 row in set (0.00 sec)
+
+mysql> call inc_sal(4);//
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from increment_salary//
++------+--------+
+| e_no | salary |
++------+--------+
+|    1 |   1100 |
++------+--------+
+1 row in set (0.00 sec)
