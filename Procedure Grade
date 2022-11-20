@@ -1,0 +1,39 @@
+mysql> create procedure grading1(rollno int)
+    -> begin
+    -> declare marks int;
+    -> declare studname varchar(20);
+    -> select total_marks,name into marks,studname from student_marks where rollnum=rollno;
+    -> if marks>=990 and marks<=1500 then
+    -> insert into student_result values(rollno,marks,"distinction");
+    -> elseif marks>=900 and marks<=989 then
+    -> insert into student_result values(rollno,studmarks,"first class");
+    -> elseif marks>=825 and marks<=899 then
+    -> insert into student_result values(rollno,studmarks,"second class");
+    -> else
+    -> select "student has failed";
+    -> end if;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call grading1(1);
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from student_result;
+    -> //
++---------+------+-------------+
+| rollnum | name | class       |
++---------+------+-------------+
+|       1 | 1500 | distinction |
++---------+------+-------------+
+1 row in set (0.00 sec)
+
+mysql> call grading1(7);
+    -> //
++--------------------+
+| student has failed |
++--------------------+
+| student has failed |
++--------------------+
+1 row in set (0.00 sec)
