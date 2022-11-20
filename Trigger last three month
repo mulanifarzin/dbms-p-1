@@ -1,0 +1,10 @@
+mysql> create trigger avgsalcalc before update on emp_sal for each row
+    -> begin
+    -> declare avgsal int;
+    -> if old.sal1>50000 or old.sal2>50000 or old.sal3>50000 then
+    -> set avgsal=(old.sal1+old.sal2+old.sal3)/3;
+    -> insert into emp_new values(old.empno,avgsal);
+    -> end if;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.02 sec)
